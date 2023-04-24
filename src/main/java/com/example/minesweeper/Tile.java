@@ -7,27 +7,26 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import static com.example.minesweeper.Minesweeper.*;
 
 public class Tile extends StackPane{
     private static int MARGIN = 1;
-    private static int HEADER = 50;
+    private static int HEADER = 50; // Constants
 
     private Rectangle rectangle;
     private Text text;
     private String currentText;
-    private Text flag;
+    private Text flag; // GUI elements
 
     private int x, y;
     boolean isAMine;
     private boolean isClicked = false;
     private boolean isFlagged = false;
-    private boolean isDark = false;
+    private boolean isDark = false; // Attributes
 
-    final private static ArrayList<String[]> langMap = new ArrayList<>();
+    final private static ArrayList<String[]> langMap = new ArrayList<>(); // Conversion table for Korean chars
 
     public Tile(int x, int y, boolean isAMine, boolean isClicked, boolean isFlagged, String conText){
         this.x = x;
@@ -38,6 +37,8 @@ public class Tile extends StackPane{
         this.currentText = conText;
 
         initializeLangMap();
+
+        // Draw tile depending on its attributes
 
         int RECT_SIZE = 20;
         setTranslateX((x * (RECT_SIZE + MARGIN)) + MARGIN);
@@ -61,7 +62,7 @@ public class Tile extends StackPane{
             flag.setFill(Color.RED);
         }
 
-        setOnMouseClicked(e -> onClick(e)); // Redirect to handle method in class. Double colon acts similar to lambda function
+        setOnMouseClicked(e -> onClick(e)); // Redirect to handler method in class
 
         getChildren().add(text);
         getChildren().add(rectangle);
@@ -74,7 +75,7 @@ public class Tile extends StackPane{
 
     }
 
-    public void setIsDark(boolean setDark){
+    public void setIsDark(boolean setDark){ // Similar to setIsDark in Minesweeper class, setter for isDark and change UI based on value
         if(!isGenerated){
             isDark = setDark;
             return;
@@ -99,19 +100,10 @@ public class Tile extends StackPane{
 
     public boolean isFlagged() {return isFlagged;}
 
-    public void setFill(boolean fill){
-        if(fill) rectangle.setFill(Color.GREY);
-        if(!fill) rectangle.setFill(null);
-    }
-
     public void setMine(boolean mine) {isAMine = mine;}
 
     public void setFlag(boolean Flag){
         isFlagged = Flag;
-    }
-
-    public boolean getFlag(){
-        return isFlagged;
     }
 
     public void setClicked(boolean clicked){
@@ -151,14 +143,6 @@ public class Tile extends StackPane{
         return text.getText();
     }
 
-    public int getX(){
-        return x;
-    }
-
-    public int getY(){
-        return y;
-    }
-
     private void reveal(){
         setClicked(true);
         rectangle.setFill(null);
@@ -178,8 +162,9 @@ public class Tile extends StackPane{
 
     public void onClick(MouseEvent e) {
 
-        try {
-            if (e.getButton() == MouseButton.SECONDARY) {
+        try { // Handle instances where tile is cleared because it is adjacent to a "0" tile
+
+            if (e.getButton() == MouseButton.SECONDARY) { // set flag
                 System.out.println("RIGHT CLICK");
                 if (isFlagged && !isClicked) {
                     isFlagged = !isFlagged;
@@ -202,23 +187,25 @@ public class Tile extends StackPane{
             System.out.println("Previous tile was blank!");
         }
 
-        if(isClicked || isFlagged){
+        if(isClicked || isFlagged){ // If tile was already flagged or clicked, do nothing
             System.out.println("Was a flag: " + isFlagged);
             return;
         }
 
-        if(!isGenerated){
+        if(!isGenerated){ // If mines have not been generated (first click), run generate method
             isGenerated = true;
             text.setText("0");
 
             generate(x, y);
         }
 
+        // Normal left click behavior follows
+
         System.out.println("clicked!");
         rectangle.setFill(null);
         unclickedTiles.remove(this);
 
-        if(isAMine){
+        if(isAMine){ // If tile is a mine
             System.out.println("You lose");
 
             for (int i = 0; i < 30; i++){
@@ -227,7 +214,7 @@ public class Tile extends StackPane{
                 }
             }
 
-        } else if (this.getText().equals("0")){
+        } else if (this.getText().equals("0")){ // If tile is blank, click all adjacent tiles automatically
             System.out.println("BLANK");
             isClicked = true;
             ArrayList<Tile> adjacentTiles = getAdjacentTiles(x, y);
@@ -238,16 +225,17 @@ public class Tile extends StackPane{
             }
 
         }
+
         isClicked = true;
 
-        for (Tile tile : unclickedTiles){
+        for (Tile tile : unclickedTiles){ // Check if user has won yet
             if (!tile.isAMine()){
                 System.out.println("You didnt win yet..");
                 return;
             }
         }
 
-        Minesweeper.isWon();
+        Minesweeper.isWon(); // User has won
 
         for (int i = 0; i < 30; i++){
             for (int j = 0; j < 16; j++){
@@ -256,13 +244,13 @@ public class Tile extends StackPane{
         }
     }
 
-    public void destroyTile(){
+    public void destroyTile(){ // Delete all UI elements from tile (used when resetting game with F3)
         getChildren().remove(rectangle);
         getChildren().remove(text);
         getChildren().remove(flag);
     }
 
-    public SerializedTile convert(){
+    public SerializedTile convert(){ // Convert to serializedTile object
         SerializedTile newTile;
         newTile = new SerializedTile(x, y, isAMine, isClicked, isFlagged, currentText, isDark);
 

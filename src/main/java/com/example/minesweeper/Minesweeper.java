@@ -70,7 +70,7 @@ public class Minesweeper extends Application {
             }
         }
 
-        catch (Exception e){ // Load a new game if file can't work or no tiles were selected in save
+        catch (Exception e){ // Load a new game if file can't work or no tiles were selected
             e.printStackTrace();
             System.out.println("Default tile map loaded");
 
@@ -131,7 +131,7 @@ public class Minesweeper extends Application {
         isDark = setDark;
     }
 
-    public static void isWon(){
+    public static void isWon(){ // Tell user they won
         title.setText("You won Korean Minesweeper!");
     }
 
@@ -140,7 +140,7 @@ public class Minesweeper extends Application {
 
         for (int i = 0; i < 30; i++){
             for (int j = 0; j < 16; j++){
-                if (Math.random() < 0.05){
+                if (Math.random() < 0.19){ // Mine percent chance ~19%
                     tileMap[i][j].setMine(true);
                     tileMap[i][j].setText("X");
 
@@ -167,7 +167,7 @@ public class Minesweeper extends Application {
         numberGenerator();
     }
 
-    private static void numberGenerator(){ // Fill tiles with numbers
+    private static void numberGenerator(){ // Fill tiles with numbers "efficiently"
         for (int i = 0; i < 30; i++){
             for (int j = 0; j < 16; j++){
                 if(tileMap[i][j].isAMine()){
@@ -180,7 +180,7 @@ public class Minesweeper extends Application {
         }
     }
 
-    public static ArrayList<Tile> getAdjacentTiles(int x, int y){ // Fill an ArrayList with each tile that surrounds a given tile
+    public static ArrayList<Tile> getAdjacentTiles(int x, int y){ // Fill an ArrayList with each tile that surrounds a given tile. Utility method used throughout program
         ArrayList<Tile> adjacentTiles = new ArrayList<>();
 
         int offsetMap[][] = {
@@ -211,7 +211,7 @@ public class Minesweeper extends Application {
     }
 
     private void onKeyPress(KeyEvent e){
-        if (e.getCode() == KeyCode.F2){
+        if (e.getCode() == KeyCode.F2){ // Show settings window
             System.out.println("F2 PRESSED");
 
             Settings settings = new Settings();
@@ -246,14 +246,14 @@ public class Minesweeper extends Application {
     }
 
     @Override
-    public void stop(){
+    public void stop(){ // Create populated tileMap.txt when user closes app
         FileController fileController = new FileController();
         fileController.write(tileMap);
         System.out.println("Save file");
     }
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws IOException { // Populate scene with createContent GUI, populate stage with scene, populate key event handler
         Scene scene = new Scene(createContent());
         scene.setOnKeyPressed(e -> onKeyPress(e));
         stage.setTitle("Korean Minesweeper - F2 for Settings - F3 for New Game");

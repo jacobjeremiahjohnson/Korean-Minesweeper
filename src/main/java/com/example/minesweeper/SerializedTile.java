@@ -2,7 +2,7 @@ package com.example.minesweeper;
 
 import java.io.Serializable;
 
-public class SerializedTile implements Serializable {
+public class SerializedTile implements Serializable { // Representation of Tile that can be represented in byte format
     private int x, y;
     boolean isAMine;
     private boolean isClicked;
@@ -20,7 +20,7 @@ public class SerializedTile implements Serializable {
         this.isDark = isDark;
     }
 
-    public Tile convert() {
+    public Tile convert() { // Convert to usable Tile object
         Tile newTile;
         newTile = new Tile(x, y, isAMine, isClicked, isFlagged, text);
         newTile.setIsDark(isDark);

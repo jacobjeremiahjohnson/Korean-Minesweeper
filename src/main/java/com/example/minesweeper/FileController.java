@@ -6,8 +6,9 @@ public class FileController {
 
     private static String FILE_NAME = "tileMap.txt";
 
-    public void write(Tile[][] tileMap){
+    public void write(Tile[][] tileMap){ // Convert every Tile in tileMap to SerializedTile so that it can be serialized and stored in txt
         clearFile();
+
         SerializedTile serTileMap[][] = new SerializedTile[30][16];
 
         for (int i = 0; i < 30; i++){
@@ -33,7 +34,7 @@ public class FileController {
         }
     }
 
-    public Tile[][] read() throws IOException, ClassNotFoundException {
+    public Tile[][] read() throws IOException, ClassNotFoundException { //Iterate through every SerializedTile in txt and convert to usable Tile object
 
         Tile tileMap[][] = new Tile[30][16];
         SerializedTile readTileMap[][];
@@ -56,7 +57,7 @@ public class FileController {
         return tileMap;
     }
 
-    private static void clearFile() {
+    private static void clearFile() { //Utility method, clear text file
         try{
             FileWriter fw = new FileWriter(FILE_NAME, false);
             PrintWriter pw = new PrintWriter(fw, false);
