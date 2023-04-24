@@ -247,7 +247,7 @@ public class Tile extends StackPane{
             }
         }
 
-        System.out.println("You win");
+        Minesweeper.isWon();
 
         for (int i = 0; i < 30; i++){
             for (int j = 0; j < 16; j++){

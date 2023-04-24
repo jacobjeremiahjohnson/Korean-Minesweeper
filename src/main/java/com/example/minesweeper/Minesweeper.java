@@ -1,3 +1,12 @@
+/*
+    Jacob Johnson
+    CSC 164
+    400
+    1/23/2023
+    Final Project
+    I wrote all the code submitted, or I have provided citations and references where appropriate.
+ */
+
 package com.example.minesweeper;
 
 import javafx.application.Application;
@@ -19,18 +28,15 @@ public class Minesweeper extends Application {
 
     public static Tile tileMap[][] = new Tile[30][16]; // Map of all Tile objects
 
-    public static ArrayList<Tile> unclickedTiles = new ArrayList<>(); // List of all unclicked tiles
+    public static ArrayList<Tile> unclickedTiles = new ArrayList<>(); // List of all un-clicked tiles, when this list is only mines the user has won
 
     static boolean isGenerated = true; // Flag that is set to true after first tile checked
+    public static boolean isDark = false; // Flag that is set to true if Dark mode is selected
     public static int currentMines = 0; // Current mine count (for GUI)
 
-    public static Text mineCount = new Text("Mine Count: " + currentMines);
+    public static Text mineCount = new Text("Mine Count: " + currentMines); // GUI elements
     private static Pane root = new Pane();
     private static Label title = new Label("Korean Minesweeper");
-
-    private boolean isWon;
-
-    public static boolean isDark = false;
 
     public Minesweeper(){
         FileController fileController = new FileController();
@@ -102,7 +108,7 @@ public class Minesweeper extends Application {
         mineCount.setText("Mine Count: " + currentMines);
     }
 
-    public static void setIsDark(boolean setDark){
+    public static void setIsDark(boolean setDark){ // Setter method, also changes GUI elements to fit theme
 
         if (setDark){
             root.setStyle("-fx-background-color: #383d45");
@@ -114,7 +120,7 @@ public class Minesweeper extends Application {
             mineCount.setFill(Color.color(.204,.204,.204,1));
         }
 
-        if (isGenerated){
+        if (isGenerated){ // If tiles not generated (user changes to dark mode before selecting a tile), tiles can't be themed yet
             for (Tile[] array : tileMap){
                 for (Tile tile : array){
                     tile.setIsDark(setDark);
@@ -125,12 +131,16 @@ public class Minesweeper extends Application {
         isDark = setDark;
     }
 
-    public static void generate(int x, int y){ // Generate mines after first tile checked
+    public static void isWon(){
+        title.setText("You won Korean Minesweeper!");
+    }
+
+    public static void generate(int x, int y){ // Generate mines after first tile checked (Guarantees first mine selected doesn't have a mine)
         ArrayList<Tile> adjacentTilesToStart = getAdjacentTiles(x, y);
 
         for (int i = 0; i < 30; i++){
             for (int j = 0; j < 16; j++){
-                if (Math.random() < 0.19){
+                if (Math.random() < 0.05){
                     tileMap[i][j].setMine(true);
                     tileMap[i][j].setText("X");
 
@@ -213,6 +223,7 @@ public class Minesweeper extends Application {
             unclickedTiles = new ArrayList<>();
             isGenerated = false;
             currentMines = 0;
+            title.setText("Korean Minesweeper");
 
             updateMineCount();
 
