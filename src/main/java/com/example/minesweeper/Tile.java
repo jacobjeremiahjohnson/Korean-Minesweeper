@@ -25,6 +25,7 @@ public class Tile extends StackPane{
     boolean isAMine;
     private boolean isClicked = false;
     private boolean isFlagged = false;
+    private boolean isDark = false;
 
     final private static ArrayList<String[]> langMap = new ArrayList<>();
 
@@ -71,6 +72,25 @@ public class Tile extends StackPane{
         coord.setFont(Font.font(7));
         getChildren().add(coord);*/
 
+    }
+
+    public void setIsDark(boolean setDark){
+        if(!isGenerated){
+            isDark = setDark;
+            return;
+        }
+
+        if (setDark){
+            text.setFill(Color.color(.7,.7,.7,1));
+        } else {
+            text.setFill(Color.color(.204,.204,.204,1));
+        }
+
+        isDark = setDark;
+    }
+
+    public boolean getDark(){
+        return isDark;
     }
 
     public boolean isAMine(){
@@ -244,7 +264,7 @@ public class Tile extends StackPane{
 
     public SerializedTile convert(){
         SerializedTile newTile;
-        newTile = new SerializedTile(x, y, isAMine, isClicked, isFlagged, currentText);
+        newTile = new SerializedTile(x, y, isAMine, isClicked, isFlagged, currentText, isDark);
 
         return newTile;
     }

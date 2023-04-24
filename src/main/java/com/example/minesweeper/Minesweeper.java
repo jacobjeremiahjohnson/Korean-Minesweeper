@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -22,11 +23,14 @@ public class Minesweeper extends Application {
 
     static boolean isGenerated = true; // Flag that is set to true after first tile checked
     public static int currentMines = 0; // Current mine count (for GUI)
-    public static Text mineCount = new Text();
 
-    private static Pane root;
+    public static Text mineCount = new Text("Mine Count: " + currentMines);
+    private static Pane root = new Pane();
+    private static Label title = new Label("Korean Minesweeper");
 
     private boolean isWon;
+
+    public static boolean isDark = false;
 
     public Minesweeper(){
         FileController fileController = new FileController();
@@ -52,6 +56,8 @@ public class Minesweeper extends Application {
                 }
             }
 
+            setIsDark(tileMap[0][0].getDark());
+
             if(noClickedTiles) {
                 Exception e = new Exception();
                 throw e;
@@ -59,6 +65,7 @@ public class Minesweeper extends Application {
         }
 
         catch (Exception e){ // Load a new game if file can't work or no tiles were selected in save
+            e.printStackTrace();
             System.out.println("Default tile map loaded");
 
             isGenerated = false;
@@ -73,15 +80,12 @@ public class Minesweeper extends Application {
 
     private Parent createContent() { // Draw all elements based on tile map
 
-        root = new Pane();
         root.setPrefSize(634, 386);
-        mineCount = new Text("Mine Count: " + currentMines);
 
         mineCount.setTranslateX(100);
         mineCount.setTranslateY(20);
         root.getChildren().add(mineCount);
 
-        Label title = new Label("Korean Minesweeper");
         title.setTranslateX(300);
         title.setTranslateY(20);
         root.getChildren().add(title);
@@ -98,6 +102,29 @@ public class Minesweeper extends Application {
         mineCount.setText("Mine Count: " + currentMines);
     }
 
+    public static void setIsDark(boolean setDark){
+
+        if (setDark){
+            root.setStyle("-fx-background-color: #383d45");
+            title.setTextFill(Color.color(.7,.7,.7,1));
+            mineCount.setFill(Color.color(.7,.7,.7,1));
+        } else {
+            root.setStyle("-fx-background-color: #f4f4f4");
+            title.setTextFill(Color.color(.204,.204,.204,1));
+            mineCount.setFill(Color.color(.204,.204,.204,1));
+        }
+
+        if (isGenerated){
+            for (Tile[] array : tileMap){
+                for (Tile tile : array){
+                    tile.setIsDark(setDark);
+                }
+            }
+        }
+
+        isDark = setDark;
+    }
+
     public static void generate(int x, int y){ // Generate mines after first tile checked
         ArrayList<Tile> adjacentTilesToStart = getAdjacentTiles(x, y);
 
@@ -111,6 +138,7 @@ public class Minesweeper extends Application {
                     updateMineCount();
                 }
                 unclickedTiles.add(tileMap[i][j]);
+                tileMap[i][j].setIsDark(isDark);
             }
         }
 
@@ -176,7 +204,8 @@ public class Minesweeper extends Application {
         if (e.getCode() == KeyCode.F2){
             System.out.println("F2 PRESSED");
 
-
+            Settings settings = new Settings();
+            settings.display();
         }
         if (e.getCode() == KeyCode.F3){ // Reset everything
             System.out.println("F3 PRESSED");
